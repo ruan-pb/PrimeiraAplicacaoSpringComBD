@@ -1,34 +1,53 @@
 package miniCursoSpringBancoDeDados.Entidades;
+
+
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-
 
 
 @Entity
-@AllArgsConstructor
 public class Disciplina {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue
 	private Long id;
 	
 	public String nome;
-	private Double nota;
+	@Basic(optional = false)
+    @Column(nullable = false)
+	private double nota;
 	private String comentarios;
-	private Integer likes;
+	
+	@Basic(optional = false)
+    @Column(nullable = false)
+	private int likes;
 	
 	
 	public Disciplina() {
 		
 	}
-	public Disciplina(@JsonProperty("nome") String nome) {
+	public Disciplina(String nome, double nota) {
+        this.nome = nome;
+        this.nota = nota;
+    }
+
+    public Disciplina(String nome, double nota, int likes, String comment) {
+        this(nome, nota);
+        this.likes = likes;
+        this.comentarios = comment;
+    }
+	
+	public Disciplina(Long id, String nome, double nota, String comentarios, int likes) {
+		super();
+		this.id = id;
 		this.nome = nome;
+		this.nota = nota;
+		this.comentarios = comentarios;
+		this.likes =likes;
 	}
 
 
@@ -72,21 +91,23 @@ public class Disciplina {
 	}
 
 
-	public Integer getLikes() {
+	public int getLikes() {
 		return likes;
 	}
 
 
-	public void setLikes(Integer likes) {
+	public void setLikes(int likes) {
 		this.likes = likes;
 	}
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ID "+this.id+" \n");
-		sb.append("Nome"+nome+"\n");
-		sb.append("Nota "+this.nota+"\n");
-		sb.append("Comentarios"+"\n");
-		sb.append(comentarios);
+		sb.append("ID "+this.id);
+		
+		sb.append("Nome "+nome);
+		sb.append("Nota "+String.format("%.2f", this.nota));
+		sb.append("Comentarios ");
+		sb.append(this.comentarios);
 		sb.append("likes ");
 		sb.append(this.likes);
 		return sb.toString();
