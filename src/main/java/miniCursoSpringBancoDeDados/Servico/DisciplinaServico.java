@@ -1,12 +1,15 @@
 package miniCursoSpringBancoDeDados.Servico;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
+
 import java.io.InputStream;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 
@@ -45,8 +48,9 @@ public class DisciplinaServico {
 				};
 				InputStream inputStream = ObjectMapper.class.getResourceAsStream("/json/disciplina.json");
 				List<Disciplina> disciplina = mapper.readValue(inputStream, tipoDeDados);
-
-				System.out.println(this.lista());
+				
+				
+				
 				System.out.println("Disciplinas salva no Banco De Dados");
 				this.disciplinaBD.saveAll(disciplina);
 			}
@@ -85,9 +89,15 @@ public class DisciplinaServico {
 		
 
 	}
+	public Disciplina getOne(Long id) throws DisciplinaException {
+        Optional<Disciplina> disciplina = this.disciplinaBD.findById(id);
+        if (disciplina != null)
+            return disciplina.get();
+        throw new DisciplinaException("Disciplina não encontrada");
+    }
 
 	public Disciplina atualizarNota(Long id, double novaNota) {
-		Disciplina disciplina01 = this.disciplinaBD.getOne(id);
+		Disciplina disciplina01 = this.getOne(id);
 		
 		if (disciplina01.getId() == id) {
 			
@@ -104,16 +114,21 @@ public class DisciplinaServico {
 		return disciplina01;
 	}
 
-	public Disciplina AdicionarComentarios(Long id, String novoComentario) {
-		Disciplina comentarios = this.disciplinaBD.getOne(id);
+	public Disciplina AdicionarComentarios(Long id, String novoComentario) throws IOException {
+		Disciplina comentarios = this.getOne(id);
 
 		if (comentarios.getComentarios() == null) {
 			comentarios.setComentarios(novoComentario);
 			disciplinaBD.save(comentarios);
 		} else {
-			String AntigoComentario = comentarios.getComentarios() + "---";
-			String AcrescimoDeComentario = AntigoComentario + novoComentario;
-			comentarios.setComentarios(AcrescimoDeComentario);
+			String AntigoComentario = comentarios.getComentarios()+" ---- ";
+			String AcrescimoDeComentario = novoComentario;
+	
+			
+			String Concatenacao =(AntigoComentario+=AcrescimoDeComentario);
+		
+			comentarios.setComentarios(Concatenacao);
+			
 			disciplinaBD.save(comentarios);
 		}
 		return comentarios;

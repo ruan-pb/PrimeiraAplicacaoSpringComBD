@@ -3,11 +3,8 @@ package miniCursoSpringBancoDeDados.Controladores;
 
 
 
+import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -76,7 +73,7 @@ public class DisciplinaControladores {
 		}
 	}
 	@PutMapping("/comentarios/{Id}")
-	public ResponseEntity<Disciplina> novoComentario(@PathVariable Long Id,@RequestBody Disciplina coment){
+	public ResponseEntity<Disciplina> novoComentario(@PathVariable Long Id,@RequestBody Disciplina coment) throws IOException{
 		String c = coment.getComentarios();
 		try {
 			return new ResponseEntity<Disciplina>(servicos.AdicionarComentarios(Id, c),HttpStatus.OK);
