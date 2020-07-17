@@ -61,40 +61,33 @@ public class DisciplinaServico {
 		return this.disciplinaBD.findAll();
 	}
 
-	public Disciplina buscar(Long clienteId) {
-		Optional<Disciplina> cliente = disciplinaBD.findById(clienteId);
-		if (cliente.isPresent()) {
-			return cliente.get();
+	public Disciplina buscar(Long disciplinaId) {
+		Optional<Disciplina> disciplina = disciplinaBD.findById(disciplinaId);
+		if (disciplina.isPresent()) {
+			return disciplina.get();
 		}
 
-		return null;
+		throw new DisciplinaException("Não Encontrado Id Informado");
 	}
 
-	public Disciplina getOne(Long id) throws DisciplinaException {
-		Optional<Disciplina> disciplina = this.disciplinaBD.findById(id);
-		if (disciplina != null)
-			return disciplina.get();
-		throw new DisciplinaException("Disciplina não encontrada");
-	}
 
 	public Disciplina DarLike(Long id) throws DisciplinaException {
-		Optional<Disciplina> dis = this.disciplinaBD.findById(id);
+		Optional<Disciplina> disciplinaOptional = this.disciplinaBD.findById(id);
 		Disciplina disciplina = null;
-		if (dis != null){
-			disciplina = dis.get();
+		if (disciplinaOptional != null){
+			disciplina = disciplinaOptional.get();
 			disciplina.setLikes(disciplina.getLikes() + 1);
 			this.disciplinaBD.save(disciplina);
 			return disciplina;
 		}
-		else {
 			throw new DisciplinaException("Discipliina Não Encontrada");
-		}
+		
 		
 
 	}
 
 	public Disciplina atualizarNota(Long id, double novaNota) {
-		Disciplina disciplina01 = this.getOne(id);
+		Disciplina disciplina01 = this.disciplinaBD.getOne(id);
 		
 		if (disciplina01.getId() == id) {
 			
@@ -112,15 +105,15 @@ public class DisciplinaServico {
 	}
 
 	public Disciplina AdicionarComentarios(Long id, String novoComentario) {
-		Disciplina comentarios = this.getOne(id);
+		Disciplina comentarios = this.disciplinaBD.getOne(id);
 
 		if (comentarios.getComentarios() == null) {
 			comentarios.setComentarios(novoComentario);
 			disciplinaBD.save(comentarios);
 		} else {
-			String com = comentarios.getComentarios() + "---";
-			String masCom = com + novoComentario;
-			comentarios.setComentarios(masCom);
+			String AntigoComentario = comentarios.getComentarios() + "---";
+			String AcrescimoDeComentario = AntigoComentario + novoComentario;
+			comentarios.setComentarios(AcrescimoDeComentario);
 			disciplinaBD.save(comentarios);
 		}
 		return comentarios;
