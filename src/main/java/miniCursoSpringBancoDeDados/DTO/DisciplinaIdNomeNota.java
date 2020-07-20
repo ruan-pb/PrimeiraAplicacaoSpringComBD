@@ -4,20 +4,24 @@ import java.io.Serializable;
 
 import miniCursoSpringBancoDeDados.Entidades.Disciplina;
 
-public class DisciplinaDTO implements Serializable {
-    private Long id;
+public class DisciplinaIdNomeNota implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Long id;
     private String nome;
     private Double nota;
 
-    public DisciplinaDTO() {}
+    public DisciplinaIdNomeNota() {}
 
-    public DisciplinaDTO(Disciplina disciplina) {
+    public DisciplinaIdNomeNota(Disciplina disciplina) {
         this.id = disciplina.getId();
         this.nome = disciplina.getNome();
         this.nota = disciplina.getNota();
     }
 
-    public static Disciplina fromDTO(DisciplinaDTO disciplinaDTO){
+    public static Disciplina fromDTO(DisciplinaIdNomeNota disciplinaDTO){
         return new Disciplina(disciplinaDTO.getNome(), disciplinaDTO.getNota());
     }
 

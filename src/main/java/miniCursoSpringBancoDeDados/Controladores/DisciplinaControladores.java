@@ -4,6 +4,7 @@ package miniCursoSpringBancoDeDados.Controladores;
 
 
 import java.io.IOException;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import miniCursoSpringBancoDeDados.DTO.DisciplinaIdNomeComentario;
+import miniCursoSpringBancoDeDados.DTO.DisciplinaIdNomeLikes;
+import miniCursoSpringBancoDeDados.DTO.DisciplinaIdNomeNota;
 import miniCursoSpringBancoDeDados.Entidades.Disciplina;
 import miniCursoSpringBancoDeDados.Excecoes.DisciplinaException;
 import miniCursoSpringBancoDeDados.Servico.DisciplinaServico;
@@ -34,8 +37,8 @@ public class DisciplinaControladores {
 
 	@GetMapping("/lista")
 	@ResponseStatus(HttpStatus.OK)
-	public List<Disciplina> lista() {
-		return servicos.lista();
+	public ResponseEntity<List<DisciplinaIdNomeNota>> lista() {
+		return new ResponseEntity<>(servicos.lista(),HttpStatus.OK);
 
 	}
 	
@@ -53,30 +56,32 @@ public class DisciplinaControladores {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Disciplina> receberLike(@PathVariable Long id){
+	public ResponseEntity<DisciplinaIdNomeLikes> receberLike(@PathVariable Long id){
         try {
-           
-            return new ResponseEntity<>(servicos.DarLike(id), HttpStatus.OK);
+            Disciplina disciplina = servicos.DarLike(id);
+            return new ResponseEntity<>(new DisciplinaIdNomeLikes(disciplina), HttpStatus.OK);
             
         }catch (DisciplinaException ex){
             return ResponseEntity.notFound().build();
         }
     }
 	@PutMapping("/atualizarNota/{Id}")
-	public ResponseEntity<Disciplina>AtualizacaoDeNota(@PathVariable Long Id,@RequestBody Disciplina disciplina){
-		double nota = disciplina.getNota();													
+	public ResponseEntity<DisciplinaIdNomeNota>AtualizacaoDeNota(@PathVariable Long Id,@RequestBody Disciplina disciplina){
+		double nota = disciplina.getNota();
+		Disciplina disciplina01 = servicos.atualizarNota(Id, nota);
 		try {
-			return new ResponseEntity<Disciplina>(servicos.atualizarNota(Id, nota),HttpStatus.OK);
+			return new ResponseEntity<DisciplinaIdNomeNota>(new DisciplinaIdNomeNota(disciplina01),HttpStatus.OK);
 		}
 		catch(DisciplinaException e) {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	@PutMapping("/comentarios/{Id}")
-	public ResponseEntity<Disciplina> novoComentario(@PathVariable Long Id,@RequestBody Disciplina coment) throws IOException{
+	public ResponseEntity<DisciplinaIdNomeComentario> novoComentario(@PathVariable Long Id,@RequestBody Disciplina coment) throws IOException{
 		String c = coment.getComentarios();
+		Disciplina disciplina01= servicos.AdicionarComentarios(Id, c);
 		try {
-			return new ResponseEntity<Disciplina>(servicos.AdicionarComentarios(Id, c),HttpStatus.OK);
+			return new ResponseEntity<DisciplinaIdNomeComentario>(new DisciplinaIdNomeComentario(disciplina01),HttpStatus.OK);
 		}
 		catch(DisciplinaException e) {
 			return ResponseEntity.notFound().build();
@@ -85,14 +90,13 @@ public class DisciplinaControladores {
 	
 	@GetMapping("/hankingNotas")
 	@ResponseStatus(HttpStatus.OK)
-	public List<Disciplina> hankingNotas(){
-		return servicos.hankingNotas();
+	public ResponseEntity<List<DisciplinaIdNomeNota>> hankingNotas(){
+		return new ResponseEntity<>(servicos.hankingNotas(),HttpStatus.OK);
 		
 	}
 	@GetMapping("/hankingLikes")
-	@ResponseStatus(HttpStatus.OK)
-	public List<Disciplina> hankingLikes(){
-		return servicos.hankingLikes();
+	public ResponseEntity<List<DisciplinaIdNomeLikes>> hankingLikes(){
+		return new ResponseEntity<>(servicos.hankingLikes(),HttpStatus.OK);
 	}
 	
 }	

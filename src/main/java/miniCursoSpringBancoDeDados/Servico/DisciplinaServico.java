@@ -1,25 +1,22 @@
 package miniCursoSpringBancoDeDados.Servico;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 
-
 import java.io.InputStream;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import miniCursoSpringBancoDeDados.DTO.DisciplinaIdNomeLikes;
+import miniCursoSpringBancoDeDados.DTO.DisciplinaIdNomeNota;
 import miniCursoSpringBancoDeDados.Entidades.Disciplina;
 import miniCursoSpringBancoDeDados.Excecoes.DisciplinaException;
 import miniCursoSpringBancoDeDados.Repositorio.DisciplinaRepositorio;
@@ -61,8 +58,10 @@ public class DisciplinaServico {
 
 	}
 
-	public List<Disciplina> lista() {
-		return this.disciplinaBD.findAll();
+	public List<DisciplinaIdNomeNota> lista() {
+		List<Disciplina> lista = this.disciplinaBD.findAll();
+		List<DisciplinaIdNomeNota> listaDto = lista.stream().map(x -> new DisciplinaIdNomeNota(x)).collect(Collectors.toList());
+		return listaDto;
 	}
 
 	public Disciplina buscar(Long disciplinaId) {
@@ -116,16 +115,15 @@ public class DisciplinaServico {
 
 	public Disciplina AdicionarComentarios(Long id, String novoComentario) throws IOException {
 		Disciplina comentarios = this.getOne(id);
-
 		if (comentarios.getComentarios() == null) {
 			comentarios.setComentarios(novoComentario);
 			disciplinaBD.save(comentarios);
 		} else {
-			String AntigoComentario = comentarios.getComentarios()+" ---- ";
+			String AntigoComentario = comentarios.getComentarios()+" --- ";
 			String AcrescimoDeComentario = novoComentario;
 	
-			
-			String Concatenacao =(AntigoComentario+=AcrescimoDeComentario);
+		
+			String Concatenacao =AntigoComentario+=AcrescimoDeComentario;
 		
 			comentarios.setComentarios(Concatenacao);
 			
@@ -134,11 +132,15 @@ public class DisciplinaServico {
 		return comentarios;
 	}
 	
-	public List<Disciplina> hankingNotas(){
-		return this.disciplinaBD.findByOrderByNotaDesc();
+	public List<DisciplinaIdNomeNota> hankingNotas(){
+		List<Disciplina> listaDisciplina = this.disciplinaBD.findByOrderByNotaDesc();
+		List<DisciplinaIdNomeNota> listaDto = listaDisciplina.stream().map(x -> new DisciplinaIdNomeNota(x)).collect(Collectors.toList());
+		return listaDto;
 	}
-	public List<Disciplina> hankingLikes(){
-		return this.disciplinaBD.findByOrderByLikesDesc();
+	public List<DisciplinaIdNomeLikes> hankingLikes(){
+		List<Disciplina> listaDisciplina = this.disciplinaBD.findByOrderByLikesDesc();
+		List<DisciplinaIdNomeLikes> listaDto = listaDisciplina.stream().map(x -> new DisciplinaIdNomeLikes(x)).collect(Collectors.toList());
+		return listaDto;
 	}
 
 }
